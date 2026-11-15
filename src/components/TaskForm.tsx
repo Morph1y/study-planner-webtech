@@ -53,7 +53,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, busy, onSave, onCancel
   };
 
   return (
-    <section id="task-editor" className="bg-white dark:bg-slate-900 rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+    <section id="task-editor" className="scroll-mt-24 bg-white dark:bg-slate-900 rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
       <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 mb-4">
         <PlusCircle className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
         {task ? 'Редагувати завдання' : 'Додати нове завдання'}

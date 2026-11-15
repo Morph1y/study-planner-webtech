@@ -1,21 +1,34 @@
-# Study Planner · Лабораторна №9
+# Study Planner · Лабораторні №8–10
 
-Локальний планувальник на React 19, TypeScript, Vite та Tailwind CSS. Потрібен Node.js 22.22 або новіший.
+Навчальний планувальник на React 19, TypeScript, Vite і Tailwind CSS. Потрібен Node.js 22.22 або новіший.
+
+| Гілка | Зміст |
+|---|---|
+| `feature/react-fundamentals` | №8. Компоненти, props, `useState`, події та рендеринг списку |
+| `feature/state-effects` | №9. Context, reducer, редагування, localStorage, Toast, видалення з Undo |
+| `feature/rest-api` | №10. DummyJSON, HTTP client, repository, CRUD, пагінація, деталі, скасування GET |
+
+## Запуск поточної гілки
 
 ```powershell
 npm ci
 npm run dev
+```
+
+Залежності спільні для всіх трьох етапів. Перед перемиканням гілки зупини Vite через Ctrl+C. Перемкнись через `git switch feature/state-effects` або іншу назву з таблиці, після цього знову запусти `npm run dev`.
+
+Для №10 потрібен файл `.env` з публічною адресою `VITE_API_URL=https://dummyjson.com`. Якщо файл відсутній, виконай `Copy-Item .env.example .env` перед запуском. `.env` ігнорується Git.
+
+```powershell
 npm run lint
 npm run build
 ```
 
-`TaskProvider` керує списком через `useReducer`. Зміни зберігаються в localStorage, а активний фільтр зберігає `useLocalStorage`. Завдання можна створювати, редагувати, фільтрувати й сортувати. Видалення одного завдання або групи виконаних можна скасувати протягом п’яти секунд. Після перезавантаження незавершене видалення скидається.
+## Як працює №10
 
-## Файли для захисту
+- API layer читає базову адресу і перевіряє HTTP-статус. Repository знає маршрути ресурсу `todos` і перетворює DTO на `Task`.
+- Завдання надходять із сервера сторінками по десять записів. Фільтрація, пошук, сортування та статистика працюють на поточній сторінці. Невдалий GET можна повторити. Зміна сторінки чи закриття діалогу деталей скасовують відповідний попередній GET.
+- DummyJSON симулює запис. Зміни з успішних POST, PATCH та DELETE показуються до перезавантаження. Після POST нові завдання мають клієнтські ID, а їхні наступні дії відбуваються локально. Для демонстрації GET за ID, PATCH та DELETE вибери завдання, отримане з API.
+- `localStorage` цієї версії зберігає вибраний фільтр. Завдання з попередньої гілки використовуються, коли запускається №9.
 
-- `src/context/TaskProvider.tsx` — dispatch, збереження, заголовок вкладки та таймер.
-- `src/reducers/taskReducer.ts` — типізовані дії та чиста функція переходів.
-- `src/hooks/useTaskContext.ts` і `src/hooks/useLocalStorage.ts` — власні hooks.
-- `src/components/TaskForm.tsx` і `src/components/Toast.tsx` — форма та повідомлення.
-
-Попередній етап доступний у гілці `feature/react-fundamentals`.
+[Документація DummyJSON Todos](https://dummyjson.com/docs/todos)
