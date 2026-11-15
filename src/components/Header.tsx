@@ -2,11 +2,12 @@ import React from 'react';
 import { BookOpen, Moon, Sun, CheckCircle2 } from 'lucide-react';
 
 interface HeaderProps {
+  lab: number;
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ isDarkMode, onToggleDarkMode }) => {
+export const Header: React.FC<HeaderProps> = ({ lab, isDarkMode, onToggleDarkMode }) => {
   return (
     <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 transition-colors">
       <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -24,7 +25,7 @@ export const Header: React.FC<HeaderProps> = ({ isDarkMode, onToggleDarkMode }) 
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Планувальник навчальних завдань • Лабораторна робота №8
+              Планувальник навчальних завдань • Лабораторна робота №{lab}
             </p>
           </div>
         </div>

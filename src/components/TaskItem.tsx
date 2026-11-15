@@ -1,20 +1,25 @@
 import React from 'react';
-import { Check, Trash2, Tag, Flag } from 'lucide-react';
+import { Check, Trash2, Tag, Flag, Pencil } from 'lucide-react';
 import type { Task } from '../types/task';
 import { PRIORITY_CONFIG } from '../types/task';
 
 interface TaskItemProps {
   task: Task;
+  pending?: boolean;
+  busy?: boolean;
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
+  onEdit: () => void;
+  onDetails?: () => void;
 }
 
-export const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
+export const TaskItem: React.FC<TaskItemProps> = ({ task, pending, busy, onToggle, onDelete, onEdit, onDetails }) => {
   const priorityInfo = PRIORITY_CONFIG[task.priority];
+  const disabled = pending || busy;
 
   return (
     <li
-      className={`group relative rounded-2xl p-4 sm:p-5 border transition-all duration-200 ${
+      className={`group relative rounded-2xl p-4 sm:p-5 border transition-all duration-200 ${pending ? 'opacity-55' : ''} ${
         task.completed
           ? 'bg-slate-50/70 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/80 opacity-75'
           : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-slate-700 shadow-xs hover:shadow-md'
@@ -25,6 +30,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) 
         <button
           type="button"
           onClick={() => onToggle(task.id)}
+          disabled={disabled}
+          aria-pressed={task.completed}
           aria-label={task.completed ? 'Позначити як невиконане' : 'Позначити як виконане'}
           className={`mt-0.5 shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all cursor-pointer ${
             task.completed
@@ -39,26 +46,33 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <h3
-              onClick={() => onToggle(task.id)}
-              className={`text-base font-semibold leading-snug cursor-pointer transition-colors ${
+              className={`text-base font-semibold leading-snug ${
                 task.completed
                   ? 'line-through text-slate-400 dark:text-slate-500'
-                  : 'text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400'
+                  : 'text-slate-800 dark:text-slate-100'
               }`}
             >
-              {task.title}
+              <button type="button" disabled={disabled} onClick={() => onToggle(task.id)}
+                className="text-left enabled:cursor-pointer enabled:hover:text-indigo-600">{task.title}</button>
             </h3>
 
-            {/* Delete Button */}
+            <div className="flex shrink-0 items-center gap-1">
+              <button type="button" disabled={disabled} onClick={onEdit}
+                aria-label={`Редагувати завдання ${task.title}`} title="Редагувати"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 disabled:opacity-40">
+                <Pencil className="w-4 h-4" />
+              </button>
             <button
               type="button"
               onClick={() => onDelete(task.id)}
+              disabled={disabled}
               aria-label={`Видалити завдання ${task.title}`}
               title="Видалити завдання"
               className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors opacity-70 group-hover:opacity-100 cursor-pointer shrink-0"
             >
               <Trash2 className="w-4 h-4" />
             </button>
+            </div>
           </div>
 
           {/* Description (if provided) */}
@@ -100,6 +114,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) 
                 ○ В роботі
               </span>
             )}
+            {pending && <span className="text-xs font-semibold text-rose-600">Буде видалено</span>}
+            {onDetails && <button type="button" onClick={onDetails} className="text-xs underline">Деталі</button>}
           </div>
         </div>
       </div>

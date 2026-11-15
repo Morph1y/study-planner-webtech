@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@keyframes undo-countdown {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {

@@ -14,7 +14,7 @@ interface TaskFiltersProps {
   onSearchChange: (value: string) => void;
   sortBy: TaskSort;
   onSortChange: (value: TaskSort) => void;
-  onClearCompleted: () => void;
+  onClearCompleted?: () => void;
 }
 
 export const TaskFilters: React.FC<TaskFiltersProps> = ({
@@ -115,7 +115,7 @@ export const TaskFilters: React.FC<TaskFiltersProps> = ({
         </div>
 
         {/* Clear Completed Button (Bonus #4) */}
-        {counts.completed > 0 && (
+        {onClearCompleted && counts.completed > 0 && (
           <button
             type="button"
             onClick={onClearCompleted}

@@ -1,20 +1,17 @@
 import React from 'react';
 import { ClipboardList, SearchX } from 'lucide-react';
 import type { Task } from '../types/task';
-import { TaskItem } from './TaskItem';
 
 interface TaskListProps {
   tasks: Task[];
   totalTasksCount: number;
-  onToggleTask: (id: number) => void;
-  onDeleteTask: (id: number) => void;
+  renderTask: (task: Task) => React.ReactNode;
 }
 
 export const TaskList: React.FC<TaskListProps> = ({
   tasks,
   totalTasksCount,
-  onToggleTask,
-  onDeleteTask,
+  renderTask,
 }) => {
   // Умовний рендеринг: коли в застосунку взагалі немає жодного завдання
   if (totalTasksCount === 0) {
@@ -52,14 +49,7 @@ export const TaskList: React.FC<TaskListProps> = ({
 
   return (
     <ul className="space-y-3">
-      {tasks.map((task) => (
-        <TaskItem
-          key={task.id}
-          task={task}
-          onToggle={onToggleTask}
-          onDelete={onDeleteTask}
-        />
-      ))}
+      {tasks.map(renderTask)}
     </ul>
   );
 };

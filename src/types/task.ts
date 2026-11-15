@@ -37,6 +37,9 @@ export const PRIORITY_CONFIG: Record<TaskPriority, PriorityInfo> = {
 };
 
 export type TaskFilter = 'all' | 'completed' | 'active';
+export function isTaskFilter(value: unknown): value is TaskFilter {
+  return value === 'all' || value === 'completed' || value === 'active';
+}
 
 export type TaskSort = 'none' | 'priority-desc' | 'priority-asc' | 'title';
 

@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
 import { PlusCircle, AlertCircle, Tag, Flag, AlignLeft, Type } from 'lucide-react';
-import type { TaskFormData, TaskPriority } from '../types/task';
+import type { Task, TaskFormData, TaskPriority } from '../types/task';
 import { PRIORITY_CONFIG } from '../types/task';
 
 interface TaskFormProps {
-  onAddTask: (data: TaskFormData) => void;
+  task?: Task;
+  busy?: boolean;
+  onSave: (data: TaskFormData) => boolean | Promise<boolean>;
+  onCancel: () => void;
 }
 
 const CATEGORY_SUGGESTIONS = ['React', 'TypeScript', 'JavaScript', 'HTML/CSS', 'Навчання', 'Проєкт'];
 
-export const TaskForm: React.FC<TaskFormProps> = ({ onAddTask }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('React');
-  const [priority, setPriority] = useState<TaskPriority>('medium');
+export const TaskForm: React.FC<TaskFormProps> = ({ task, busy, onSave, onCancel }) => {
+  const [title, setTitle] = useState(task?.title ?? '');
+  const [description, setDescription] = useState(task?.description ?? '');
+  const [category, setCategory] = useState(task?.category ?? 'React');
+  const [priority, setPriority] = useState<TaskPriority>(task?.priority ?? 'medium');
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (busy) return;
 
     const trimmedTitle = title.trim();
     if (!trimmedTitle) {
@@ -25,12 +29,13 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onAddTask }) => {
       return;
     }
 
-    onAddTask({
+    const saved = await onSave({
       title: trimmedTitle,
       description: description.trim(),
       category: category.trim() || 'Загальне',
       priority,
     });
+    if (!saved || task) return;
 
     // Очищення форми після успішного додавання
     setTitle('');
@@ -48,13 +53,14 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onAddTask }) => {
   };
 
   return (
-    <section className="bg-white dark:bg-slate-900 rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+    <section id="task-editor" className="bg-white dark:bg-slate-900 rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
       <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 mb-4">
         <PlusCircle className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-        Додати нове завдання
+        {task ? 'Редагувати завдання' : 'Додати нове завдання'}
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <fieldset disabled={busy} className="space-y-4 disabled:opacity-60">
         {/* Title Field */}
         <div>
           <label
@@ -179,15 +185,17 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onAddTask }) => {
         </div>
 
         {/* Submit Button */}
-        <div className="pt-2 flex justify-end">
+        <div className="pt-2 flex flex-wrap justify-end gap-3">
+          {task && <button type="button" onClick={onCancel} className="px-4 text-sm underline">Скасувати редагування</button>}
           <button
             type="submit"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-medium text-sm shadow-md shadow-indigo-500/20 active:scale-[0.98] transition-all cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
-            Додати завдання
+            {busy ? 'Зачекайте…' : task ? 'Зберегти зміни' : 'Додати завдання'}
           </button>
         </div>
+        </fieldset>
       </form>
     </section>
   );
